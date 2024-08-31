@@ -1,0 +1,9 @@
+Data Structure,Insertion,Deletion,Search,Storage,Scalability,Complexity,Suitable for Social Media?
+Skip List,O(log n),O(log n),O(log n),O(n log n),Good,Moderate,"Yes, good for large graphs and frequent updates"
+Balanced Binary Search Trees (BBSTs),O(log n),O(log n),O(log n),O(n),Good,High,"Yes, good for large graphs and frequent updates"
+Hash Tables,O(1) (average),O(1) (average),O(1) (average),O(n),Good,Moderate,"Yes, good for fast operations, but can have collisions"
+Graph Databases,Varies,Varies,Varies,O(n),Excellent,High,"Yes, specifically designed for graph data, but can be resource-intensive"
+Adjacency Lists,O(1),O(n),O(n),O(m),Good,Low,"Yes, simple and efficient for smaller graphs"
+Adjacency Matrices,O(n^2),O(1),O(1),O(n^2),Poor,Low,"Not ideal for large graphs, can be inefficient"
+Trie (Prefix Tree),Varies,Varies,Varies,O(n),Good,Moderate,Potentially useful for username or hashtag search
+B-Tree,O(log n),O(log n),O(log n),O(n log n),Excellent,High,"Yes, good for large graphs and frequent updates"
