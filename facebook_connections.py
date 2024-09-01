@@ -1,18 +1,32 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 from collections import deque
+import random
 
 class FacebookGraph:
     def __init__(self):
         self.graph = nx.Graph()
-
+        self.prob_graph = {}  # Additional graph to handle probabilistic connections
+    
     def add_connection(self, user1, user2):
+        """Add a deterministic connection (friendship) between two users."""
         self.graph.add_edge(user1, user2)
     
+    def add_probabilistic_connection(self, user1, user2, probability):
+        """Add a probabilistic connection between two users with a specified probability."""
+        if user1 not in self.prob_graph:
+            self.prob_graph[user1] = {}
+        if user2 not in self.prob_graph:
+            self.prob_graph[user2] = {}
+        self.prob_graph[user1][user2] = probability
+        self.prob_graph[user2][user1] = probability  # Assuming undirected graph
+
     def get_mutual_friends(self, user1, user2):
+        """Get mutual friends between two users."""
         return set(self.graph.neighbors(user1)) & set(self.graph.neighbors(user2))
     
     def find_connection_path(self, start, end, max_depth=3):
+        """Find a path between two users within a certain depth."""
         queue = deque([(start, [start])])
         visited = set([start])
         
@@ -33,9 +47,11 @@ class FacebookGraph:
         return None
 
     def get_friend_count(self, user):
+        """Get the number of friends a user has."""
         return self.graph.degree(user)
 
     def get_friends_of_friends(self, user):
+        """Get friends of friends for a user."""
         friends = set(self.graph.neighbors(user))
         friends_of_friends = set()
         for friend in friends:
@@ -43,7 +59,17 @@ class FacebookGraph:
         friends_of_friends.discard(user)
         return friends_of_friends - friends
 
+    def get_probability(self, user1, user2):
+        """Return the probability of a probabilistic edge between two users."""
+        return self.prob_graph.get(user1, {}).get(user2, 0)
+    
+    def are_connected_probabilistically(self, user1, user2):
+        """Simulate if two users are connected based on their edge probability."""
+        probability = self.get_probability(user1, user2)
+        return random.random() < probability
+
     def visualize_graph(self, highlight_path=None):
+        """Visualize the graph and optionally highlight a path."""
         pos = nx.spring_layout(self.graph, k=0.5, iterations=50)
         plt.figure(figsize=(12, 8))
         
@@ -57,7 +83,7 @@ class FacebookGraph:
             nx.draw_networkx_nodes(self.graph, pos, nodelist=highlight_path, node_color='lightgreen', node_size=600)
             nx.draw_networkx_edges(self.graph, pos, edgelist=path_edges, edge_color='r', width=2)
         
-        plt.title("Facebook-inspired Social Graph")
+        plt.title("Facebook-inspired Social Graph with Probabilistic Connections")
         plt.axis('off')
         plt.tight_layout()
         plt.show()
@@ -65,7 +91,7 @@ class FacebookGraph:
 # Create a FacebookGraph instance
 fb_graph = FacebookGraph()
 
-# Add connections
+# Add deterministic connections
 connections = [
     ("Alice", "Bob"), ("Alice", "Charlie"), ("Alice", "David"),
     ("Bob", "Charlie"), ("Bob", "Eve"), ("Bob", "Frank"),
@@ -76,6 +102,11 @@ connections = [
 
 for user1, user2 in connections:
     fb_graph.add_connection(user1, user2)
+
+# Add probabilistic connections
+fb_graph.add_probabilistic_connection('UserA', 'UserB', 0.7)
+fb_graph.add_probabilistic_connection('UserA', 'UserC', 0.4)
+fb_graph.add_probabilistic_connection('UserB', 'UserC', 0.6)
 
 # Test Case 1: Mutual Friends
 print("Test Case 1: Mutual Friends")
@@ -113,6 +144,13 @@ print("\nTest Case 7: Connection Path (Longer path)")
 path = fb_graph.find_connection_path("Alice", "Harry")
 print("Connection path from Alice to Harry:", path)
 fb_graph.visualize_graph(highlight_path=path)
+
+# Test Case 8: Probabilistic Connections
+print("\nTest Case 8: Probabilistic Connections")
+print(f"Probability of connection between UserA and UserB: {fb_graph.get_probability('UserA', 'UserB')}")
+print(f"Probability of connection between UserA and UserC: {fb_graph.get_probability('UserA', 'UserC')}")
+print(f"Are UserA and UserB connected? {'Yes' if fb_graph.are_connected_probabilistically('UserA', 'UserB') else 'No'}")
+print(f"Are UserA and UserC connected? {'Yes' if fb_graph.are_connected_probabilistically('UserA', 'UserC') else 'No'}")
 
 # Visualize the entire graph
 fb_graph.visualize_graph()
