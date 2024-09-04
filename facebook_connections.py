@@ -23,10 +23,15 @@ class FacebookGraph:
 
     def get_mutual_friends(self, user1, user2):
         """Get mutual friends between two users."""
+        if user1 not in self.graph or user2 not in self.graph:
+            raise ValueError("One or both users do not exist in the graph")
         return set(self.graph.neighbors(user1)) & set(self.graph.neighbors(user2))
     
     def find_connection_path(self, start, end, max_depth=3):
         """Find a path between two users within a certain depth."""
+        if start not in self.graph or end not in self.graph:
+            raise ValueError("One or both users do not exist in the graph")
+        
         queue = deque([(start, [start])])
         visited = set([start])
         
@@ -48,10 +53,14 @@ class FacebookGraph:
 
     def get_friend_count(self, user):
         """Get the number of friends a user has."""
+        if user not in self.graph:
+            raise ValueError("User does not exist in the graph")
         return self.graph.degree(user)
 
     def get_friends_of_friends(self, user):
         """Get friends of friends for a user."""
+        if user not in self.graph:
+            raise ValueError("User does not exist in the graph")
         friends = set(self.graph.neighbors(user))
         friends_of_friends = set()
         for friend in friends:
@@ -110,40 +119,61 @@ fb_graph.add_probabilistic_connection('UserB', 'UserC', 0.6)
 
 # Test Case 1: Mutual Friends
 print("Test Case 1: Mutual Friends")
-mutual_friends = fb_graph.get_mutual_friends("Alice", "Bob")
-print("Mutual friends of Alice and Bob:", mutual_friends)
+try:
+    mutual_friends = fb_graph.get_mutual_friends("Alice", "Bob")
+    print("Mutual friends of Alice and Bob:", mutual_friends)
+except ValueError as e:
+    print(f"Error: {e}")
 
 # Test Case 2: Connection Path
 print("\nTest Case 2: Connection Path")
-path = fb_graph.find_connection_path("Alice", "George")
-print("Connection path from Alice to George:", path)
-fb_graph.visualize_graph(highlight_path=path)
+try:
+    path = fb_graph.find_connection_path("Alice", "George")
+    print("Connection path from Alice to George:", path)
+    fb_graph.visualize_graph(highlight_path=path)
+except ValueError as e:
+    print(f"Error: {e}")
 
 # Test Case 3: No Connection Path
 print("\nTest Case 3: No Connection Path")
-path = fb_graph.find_connection_path("Alice", "Harry", max_depth=2)
-print("Connection path from Alice to Harry (max depth 2):", path)
+try:
+    path = fb_graph.find_connection_path("Alice", "Harry", max_depth=2)
+    print("Connection path from Alice to Harry (max depth 2):", path)
+except ValueError as e:
+    print(f"Error: {e}")
 
 # Test Case 4: Friend Count
 print("\nTest Case 4: Friend Count")
-print("Bob's friend count:", fb_graph.get_friend_count("Bob"))
-print("George's friend count:", fb_graph.get_friend_count("George"))
+try:
+    print("Bob's friend count:", fb_graph.get_friend_count("Bob"))
+    print("George's friend count:", fb_graph.get_friend_count("George"))
+except ValueError as e:
+    print(f"Error: {e}")
 
 # Test Case 5: Friends of Friends
 print("\nTest Case 5: Friends of Friends")
-fof_alice = fb_graph.get_friends_of_friends("Alice")
-print("Alice's friends of friends:", fof_alice)
+try:
+    fof_alice = fb_graph.get_friends_of_friends("Alice")
+    print("Alice's friends of friends:", fof_alice)
+except ValueError as e:
+    print(f"Error: {e}")
 
 # Test Case 6: Mutual Friends (No mutual friends)
 print("\nTest Case 6: Mutual Friends (No mutual friends)")
-mutual_friends = fb_graph.get_mutual_friends("Alice", "George")
-print("Mutual friends of Alice and George:", mutual_friends)
+try:
+    mutual_friends = fb_graph.get_mutual_friends("Alice", "George")
+    print("Mutual friends of Alice and George:", mutual_friends)
+except ValueError as e:
+    print(f"Error: {e}")
 
 # Test Case 7: Connection Path (Longer path)
 print("\nTest Case 7: Connection Path (Longer path)")
-path = fb_graph.find_connection_path("Alice", "Harry")
-print("Connection path from Alice to Harry:", path)
-fb_graph.visualize_graph(highlight_path=path)
+try:
+    path = fb_graph.find_connection_path("Alice", "Harry")
+    print("Connection path from Alice to Harry:", path)
+    fb_graph.visualize_graph(highlight_path=path)
+except ValueError as e:
+    print(f"Error: {e}")
 
 # Test Case 8: Probabilistic Connections
 print("\nTest Case 8: Probabilistic Connections")
